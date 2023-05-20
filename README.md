@@ -55,30 +55,32 @@ Após fazer login, clique no seu nome de usuário no canto superior direito e se
 Na página de configurações, clique na guia "Tokens" no menu lateral esquerdo.
 </p>
 Na seção "Tokens de acesso", clique no botão "Novo token".
-
+</p>
 Crie 4 Links de Pagamento
-
+</p>
 Todos eles tem link unico no final que seja "ID Plano" no N8N
 
 ----------------------------------------------------------------------------
 
 **Segundo passo imaginamos que vc ja tenha Chatwoot+N8N+Quepasa instalados**
 
+</p>
 Manual Instalação CHATWOOT QUEPASA
-
+</p>
 https://github.com/EngajamentoFlow/chatwoot
-
+</p>
 Manual Instalação N8N
-
+</p>
 https://github.com/EngajamentoFlow/n8n
-
+</p>
 Manual Instalação QUEPASA
-
+</p>
 https://github.com/EngajamentoFlow/quepasa
-
+</p>
 Montando Caixa de Entrada
-
+</p>
 https://github.com/EngajamentoFlow/quepasan8nchatwoot
+</p>
 
 ----------------------------------------------------------------------------
 
@@ -128,6 +130,7 @@ Nesse worflow não faremos nada
 </p>
 
 ----------------------------------------------------------------------------
+
 </p>
 </p>
 
