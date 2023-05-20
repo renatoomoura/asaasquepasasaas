@@ -147,7 +147,27 @@ ID Plano 4
 **Worflow Asaas Chatwoot Pagamentos Quepasa Renovação**
 
 </p>
-Nesse worflow não faremos nada
+</p>
+Procure por "Coloque as informações Informações"
+</p>
+Coloque seguintes informações
+</p>
+URLQUEPSA
+</p>
+TOKEN QUEPASA
+</p>
+URL CHATWOOT
+</p>
+Token Asaas
+</p>
+ID Plano 1
+</p>
+ID Plano 2
+</p>
+ID Plano 3
+</p>
+ID Plano 4
+</p>
 </p>
 
 ----------------------------------------------------------------------------
@@ -268,6 +288,10 @@ Próximo Vencimento
 ----------------------------------------------------------------------------
 
 **Volte Worflow Asaas Chatwoot Pagamentos Quepasa**
+
+**Volte Worflow Asaas Chatwoot Pagamentos Quepasa Renovação**
+
+
 </p>
 Coloque suas credeciais Google Sheets
 </p>
