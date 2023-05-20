@@ -31,156 +31,132 @@
 ```
 ----------------------------------------------------------------------------
 
-**Manual de Instalação API Quepasa**
+**Manual Gateway de pagamento Asaas com Quepasa**
 
-</p></p>
-sudo apt update && sudo apt upgrade y
+----------------------------------------------------------------------------
+
+**Conta Asaas**
+
 </p>
-curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
-</p>
-sudo apt-get install -y nodejs
-</p>
-sudo apt-get install git-all
+Precisamos ter uma conta na Asaas se não copie link abaixo 
 </p>
 
 ```
-git clone https://github.com/nocodeleaks/quepasa /opt/quepasa-source
-bash /opt/quepasa-source/helpers/install.sh
+https://www.asaas.com/r/fb/494c528f-9bd1-4f7a-b31d-4def8c0822d0
 ```
 
 </p>
-sudo apt install nginx
+Segunda tarefa e criar token no Asaas
 </p>
+Acesse o painel de controle do ASAAS em https://www.asaas.com/login.
 
+Faça login com suas credenciais de conta.
 </p>
-sudo nano /etc/nginx/sites-available/quepasa
+Após fazer login, clique no seu nome de usuário no canto superior direito e selecione "Configurações" no menu suspenso.
 </p>
-
-
-```
-server {
-
-  server_name quepasa.dominio.com.br;
-
-  location / {
-
-    proxy_pass http://127.0.0.1:31000;
-
-    proxy_http_version 1.1;
-
-    proxy_set_header Upgrade $http_upgrade;
-
-    proxy_set_header Connection 'upgrade';
-
-    proxy_set_header Host $host;
-
-    proxy_set_header X-Real-IP $remote_addr;
-
-    proxy_set_header X-Forwarded-Proto $scheme;
-
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    
-    proxy_cache_bypass $http_upgrade;
-
-  }
-
-  }
-```
-
-sudo ln -s /etc/nginx/sites-available/quepasa /etc/nginx/sites-enabled
+Na página de configurações, clique na guia "Tokens" no menu lateral esquerdo.
 </p>
-sudo apt-get install snapd
-</p>
-sudo snap install notes
-</p>
-sudo snap install --classic certbot
-</p>
-sudo certbot --nginx
-</p>
-sudo service nginx restart
-</p>
-</p>
+Na seção "Tokens de acesso", clique no botão "Novo token".
 
+Crie 4 Links de Pagamento
 
-sudo certbot --nginx
-</p>
-sudo service nginx restart
-</p>
+Todos eles tem link unico no final que seja "ID Plano" no N8N
 
 ----------------------------------------------------------------------------
 
-**Ativando SSL da API Quepasa**
+**Segundo passo imaginamos que vc ja tenha Chatwoot+N8N+Quepasa instalados**
 
-nano /opt/quepasa-source/src/.env
-</p>
-Alterar linha 1
-</p>
-WEBSOCKETSSL=false
-</p>
-para
-</p>
-WEBSOCKETSSL=true
-</p>
-systemctl restart quepasa
-</p>
+Manual Instalação CHATWOOT QUEPASA
 
-----------------------------------------------------------------------------
+https://github.com/EngajamentoFlow/chatwoot
 
-***Execute esse processo abaixo parra deixar mais rapida sua API**
+Manual Instalação N8N
 
-nano /etc/hosts
+https://github.com/EngajamentoFlow/n8n
 
-Adicione isso na primeira linha 
-127.0.0.1       localhost app.dominio.com.br conector.dominio.com.br api.dominio.com.br
+Manual Instalação QUEPASA
+
+https://github.com/EngajamentoFlow/quepasa
+
+Montando Caixa de Entrada
+
+https://github.com/EngajamentoFlow/quepasan8nchatwoot
 
 ----------------------------------------------------------------------------
 
-**Instalação Finalizadas**
+**Worflows N8N**
 
 </p>
-quepa.dominio.com.br/setup
-</p>
-Faça os cadastros em todos eles
+Abaixe o Worflows que estão nesse GitHub e importe em seu N8N
 </p>
 
+**Worflow Asaas Chatwoot Pagamentos Quepasa**
+
+</p>
+Procure por "Coloque as informações Informações"
+</p>
+Coloque seguintes informações
+</p>
+URLQUEPSA
+</p>
+TOKEN QUEPASA
+</p>
+URL CHATWOOT
+</p>
+Token Asaas
+</p>
+ID Plano 1
+</p>
+ID Plano 2
+</p>
+ID Plano 3
+</p>
+ID Plano 4
+</p>
+Seu Numero de Telefone
+</p>
+Ajuste NO Trigger Renovação para numero do Worflow Worflow Asaas Chatwoot Pagamentos Quepasa Renovação"
+</p>
+Ative Worflow e pronto primeiro ja esta funcionando 
+</p>
+
+----------------------------------------------------------------------------
+</p>
+
+**Worflow Asaas Chatwoot Pagamentos Quepasa Renovação**
+
+</p>
+Nesse worflow não faremos nada
+</p>
+
+----------------------------------------------------------------------------
+</p>
+
+**Worflow Asaas Chatwoot Pagamentos Quepasa Vencidos**
+
+</p>
+Crie uma planilha Google Sheets com seguintes colunas
+</p>
+Nome	
+</p>
+Email	
+</p>
+Telefone	
+</p>
+Próximo Vencimento
+</p>
+Coloque suas credeciais Google Sheets
+</p>
+Coloque credeciais Postgres a mesma usada no Chatwoot
+</p>
 
 ----------------------------------------------------------------------------
 ----------------------------------------------------------------------------
+
+</p>
 
 **Pronto tudo Funcionando**
 
-----------------------------------------------------------------------------
-----------------------------------------------------------------------------
-
-**Comando atualizar API Quepasa**
-
-su - quepasa
-</p>
-cd /opt/quepasa
-</p>
-git pull
-</p>
-exit
-</p>
-systemctl daemon-reload
-</p>
-
-----------------------------------------------------------------------------
-----------------------------------------------------------------------------
-
-**Comandos basicos API Quepasa**
-
-mv /opt/quepasa/views/setup.tmpl /opt/quepasa/views/setup.tmpl.old
-</p>
-/info 
-</p>
-/agentbot
-</p>
-/webhook update
-</p>
-/webhook remove
-</p>
-/webhook clear
 </p>
 
 ----------------------------------------------------------------------------
