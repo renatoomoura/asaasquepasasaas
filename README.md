@@ -115,7 +115,7 @@ ID Plano 4
 </p>
 Seu Numero de Telefone
 </p>
-Ajuste NO Trigger Renovação para numero do Worflow Worflow Asaas Chatwoot Pagamentos Quepasa Renovação"
+Ajuste NO Trigger Renovação para numero do Worflow Asaas Chatwoot Pagamentos Quepasa Renovação"
 </p>
 Ative Worflow e pronto primeiro ja esta funcionando 
 </p>
