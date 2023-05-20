@@ -60,6 +60,8 @@ Crie 4 Links de Pagamento
 </p>
 Todos eles tem link unico no final que seja "ID Plano" no N8N
 
+Coloque os links em sua pagina inicial (Se criado já)
+
 ----------------------------------------------------------------------------
 
 **Segundo passo imaginamos que vc ja tenha Chatwoot+N8N+Quepasa instalados**
@@ -117,10 +119,29 @@ Seu Numero de Telefone
 </p>
 Ajuste NO Trigger Renovação para numero do Worflow Asaas Chatwoot Pagamentos Quepasa Renovação"
 </p>
-Ative Worflow e pronto primeiro ja esta funcionando 
+
 </p>
 
 ----------------------------------------------------------------------------
+
+**Ajustando Quantidade de Atendentes e Inbox de cada Usuario**
+
+</p>
+NOS do Worflow Worflow Asaas Chatwoot Pagamentos Quepasa
+</p>
+Ajuste a quantidade de atendentes e Inbox que vai iberar para cada User
+</p>
+ID Plano 1
+</p>
+ID Plano 2
+</p>
+ID Plano 3
+</p>
+ID Plano 4
+</p>
+
+----------------------------------------------------------------------------
+
 </p>
 
 **Worflow Asaas Chatwoot Pagamentos Quepasa Renovação**
@@ -243,10 +264,16 @@ Telefone
 </p>
 Próximo Vencimento
 </p>
+
+----------------------------------------------------------------------------
+
+**Volte Worflow Asaas Chatwoot Pagamentos Quepasa**
+</p>
 Coloque suas credeciais Google Sheets
 </p>
 Coloque credeciais Postgres a mesma usada no Chatwoot
 </p>
+Agora todos clientes que pagarem pelo link criado sera criado Conta e Usuario do cliente
 
 ----------------------------------------------------------------------------
 ----------------------------------------------------------------------------
