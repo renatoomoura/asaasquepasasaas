@@ -1,0 +1,201 @@
+{
+  "name": "Worflow Asaas Chatwoot Pagamentos Quepasa Vencidos",
+  "nodes": [
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "13iPzU9CrjUnri_dXLtn4W2R4dl5gTWScwzbFDL9QhFE",
+          "mode": "list",
+          "cachedResultName": "Expirados",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/13iPzU9CrjUnri_dXLtn4W2R4dl5gTWScwzbFDL9QhFE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Página1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/13iPzU9CrjUnri_dXLtn4W2R4dl5gTWScwzbFDL9QhFE/edit#gid=0"
+        },
+        "options": {}
+      },
+      "id": "68a31c42-be1f-4d12-9a86-332e9b2c84c5",
+      "name": "Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 3,
+      "position": [
+        220,
+        220
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "2",
+          "name": "Google Sheets SocialWhats"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 23
+            }
+          ]
+        }
+      },
+      "id": "6e80834a-4777-48d8-9c83-f70508e30db6",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [
+        40,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "value": "={{ $json['Próximo Vencimento'] }}",
+        "dataPropertyName": "Data Expiração",
+        "toFormat": "YYYY-MM-DD",
+        "options": {}
+      },
+      "id": "51a67067-6925-41d9-af4f-7129b2b38733",
+      "name": "Enviando Formato Data Vencimento",
+      "type": "n8n-nodes-base.dateTime",
+      "typeVersion": 1,
+      "position": [
+        420,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "=SELECT * FROM users WHERE DATE(confirmed_at) = '{{ $json['Data Expiração'] }}'; ",
+        "options": {}
+      },
+      "id": "ea4af470-4289-441f-ac30-f684614ef709",
+      "name": "Verifica os Vencidos",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.1,
+      "position": [
+        600,
+        220
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "1",
+          "name": "Postgres SocialAtendimento"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "=Update accounts set status = 1 where name = '{{ $json.name }}'",
+        "options": {}
+      },
+      "id": "70686d63-8110-4315-b59e-586d0d2ae886",
+      "name": "Marca como Vencido",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.1,
+      "position": [
+        780,
+        220
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "1",
+          "name": "Postgres SocialAtendimento"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviando Formato Data Vencimento": {
+      "main": [
+        [
+          {
+            "node": "Verifica os Vencidos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Enviando Formato Data Vencimento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verifica os Vencidos": {
+      "main": [
+        [
+          {
+            "node": "Marca como Vencido",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {},
+  "versionId": "2e1338ce-76d0-4ddb-bef0-9d3614d2eb76",
+  "id": "31",
+  "meta": {
+    "instanceId": "f02f26887e67df04425977547fa1b8580520c931a164aac95b06be62082bb6f9"
+  },
+  "tags": [
+    {
+      "createdAt": "2023-05-06T20:24:55.307Z",
+      "updatedAt": "2023-05-06T20:24:55.307Z",
+      "id": "1",
+      "name": "SUFFICIT"
+    },
+    {
+      "createdAt": "2023-05-06T20:25:45.644Z",
+      "updatedAt": "2023-05-06T20:25:45.644Z",
+      "id": "2",
+      "name": "EngajamentoFlow"
+    },
+    {
+      "createdAt": "2023-05-06T20:25:45.644Z",
+      "updatedAt": "2023-05-06T20:25:45.644Z",
+      "id": "3",
+      "name": "QUEPASA"
+    },
+    {
+      "createdAt": "2023-05-06T20:26:21.016Z",
+      "updatedAt": "2023-05-06T20:26:21.016Z",
+      "id": "6",
+      "name": "CHATWOOT"
+    },
+    {
+      "createdAt": "2023-05-07T16:57:34.748Z",
+      "updatedAt": "2023-05-07T16:57:34.748Z",
+      "id": "7",
+      "name": "V1"
+    }
+  ]
+}

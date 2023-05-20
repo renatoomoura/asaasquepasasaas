@@ -1,0 +1,1215 @@
+{
+  "name": "Worflow Asaas Chatwoot Pagamentos Quepasa",
+  "nodes": [
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "client_name",
+              "value": "={{ $json.data[0].name }}"
+            },
+            {
+              "name": "=client_email",
+              "value": "={{ $json.data[0].email }}"
+            },
+            {
+              "name": "=client_cel",
+              "value": "={{$json[\"client_cel\"]}}"
+            },
+            {
+              "name": "Companies",
+              "value": "=INSERT INTO \"Companies\" (\"id\", \"name\", \"phone\", \"email\", \"createdAt\", \"updatedAt\", \"planId\", \"status\", \"schedules\", \"dueDate\", \"recurrence\") VALUES ({{$json[\"client_documment\"]}}, '{{ $json.data[0].name }}', '{{$json[\"client_cel\"]}}', '{{ $json.data[0].email }}', '2022-10-21 13:12:29.305+02', '2022-10-21 16:35:08.38+02', {{$json[\"Pacote\"]}}, 'true', '[]', '{{ $json[\"data_formatada\"] }}', 'MENSAL');"
+            },
+            {
+              "name": "Users",
+              "value": "=INSERT INTO \"Users\" (\"id\", \"name\", \"email\", \"passwordHash\", \"createdAt\", \"updatedAt\", \"profile\", \"tokenVersion\", \"companyId\", \"super\", \"online\") VALUES ({{$json[\"client_documment\"]}}, '{{$json[\"client_name\"]}}', '{{$json[\"client_email\"]}}', '$2a$08$x7N3auyfdVPRH8x5HEC3BO9yT5i2bXaRLA.JzWUJetj002UZya6z.', '2022-10-21 13:12:29.369+02', '2022-10-21 17:27:00.087+02', 'admin', 0, {{$json[\"client_documment\"]}}, 'true', 'false');"
+            },
+            {
+              "name": "Settings",
+              "value": "=INSERT INTO \"Settings\" (\"key\", \"value\", \"createdAt\", \"updatedAt\", \"companyId\", \"id\") VALUES ('campaignsEnabled', 'true', '2022-10-21 19:54:16.723+02', '2022-10-21 19:54:16.723+02', {{$json[\"client_documment\"]}}, {{$json[\"client_documment\"]}});"
+            }
+          ]
+        },
+        "options": {
+          "dotNotation": false
+        }
+      },
+      "id": "bbf7cd80-48c6-4c2b-b4ba-16eaf74c1152",
+      "name": "Organizando as Informações",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [
+        2120,
+        640
+      ]
+    },
+    {
+      "parameters": {
+        "values": {
+          "number": [
+            {
+              "name": "client_cel",
+              "value": "=55{{ $json.data[0].mobilePhone }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2c26deef-4cdf-460c-a38b-09b655ad2657",
+      "name": "Capturando Telefone",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [
+        1340,
+        640
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.body.event }}",
+              "value2": "PAYMENT_RECEIVED"
+            }
+          ]
+        }
+      },
+      "id": "60282af1-bb2c-48b5-8073-4d1f2d7dcbcf",
+      "name": "Verificando Status",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -200,
+        680
+      ]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "Fatura",
+              "value": "={{ $json.body.payment.invoiceUrl }}"
+            },
+            {
+              "name": "data_compra",
+              "value": "={{ $json.body.payment.clientPaymentDate }}"
+            },
+            {
+              "name": "customer",
+              "value": "={{ $json.body.payment.customer }}"
+            },
+            {
+              "name": "paymentLink",
+              "value": "={{ $json.body.payment.paymentLink }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c8a55811-9786-4029-82dc-c060b56c8720",
+      "name": "Obtendo Informações do Webhook",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [
+        220,
+        660
+      ]
+    },
+    {
+      "parameters": {
+        "action": "calculate",
+        "value": "={{ $json.data[0].dateCreated }}",
+        "duration": "={{ $node.Dias.json.Dias }}",
+        "dataPropertyName": "Data próximo Vencimento",
+        "options": {}
+      },
+      "id": "889a8337-20f9-4922-8685-895fd47c394b",
+      "name": "Capturando Data",
+      "type": "n8n-nodes-base.dateTime",
+      "typeVersion": 1,
+      "position": [
+        1580,
+        640
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "=SELECT id FROM public.accounts WHERE name = '{{ $json.client_name }}' LIMIT 1;",
+        "additionalFields": {}
+      },
+      "id": "d2398d42-fc1d-47d8-b9d4-41507ccfaa4e",
+      "name": "Get Existent Account",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1,
+      "position": [
+        2880,
+        900
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "1",
+          "name": "Postgres SocialAtendimento"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.AccountId }}",
+              "operation": "isNotEmpty"
+            }
+          ]
+        }
+      },
+      "id": "f85ccf0d-6afd-4bde-a903-15126ddbb724",
+      "name": "If account found ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        3580,
+        660
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combinationMode": "multiplex",
+        "options": {}
+      },
+      "id": "d6cabcab-56cf-485e-9218-fe99d15af047",
+      "name": "Merge",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2,
+      "position": [
+        3300,
+        660
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combinationMode": "multiplex",
+        "options": {}
+      },
+      "id": "57aca0f2-7587-4a3e-9cdd-6f1e140ee825",
+      "name": "Merge1",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2,
+      "position": [
+        4180,
+        680
+      ]
+    },
+    {
+      "parameters": {
+        "keepOnlySet": true,
+        "values": {
+          "string": [
+            {
+              "name": "AccountId",
+              "value": "={{ $json.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c2965c39-ef5e-4562-86ac-0e9caa1e33f4",
+      "name": "Set",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        3980,
+        900
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "ad199426-14bd-4a21-9584-537004b99604",
+      "name": "No Operation, do nothing",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        4400,
+        540
+      ]
+    },
+    {
+      "parameters": {
+        "keepOnlySet": true,
+        "values": {
+          "string": [
+            {
+              "name": "AccountId",
+              "value": "={{ $json.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a059871f-e018-4499-a152-967bc9e160dc",
+      "name": "Set1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        3120,
+        900
+      ]
+    },
+    {
+      "parameters": {
+        "keepOnlySet": true,
+        "values": {
+          "string": [
+            {
+              "name": "UserId",
+              "value": "={{ $json.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "4c6a7734-6cdf-43aa-88e8-a280173333c3",
+      "name": "Set2",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        4900,
+        860
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combinationMode": "multiplex",
+        "options": {}
+      },
+      "id": "ce88d919-65b8-4be6-b09b-5a0dadda7acd",
+      "name": "Merge2",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2,
+      "position": [
+        5200,
+        700
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://app.socialatendimento.com.br/platform/api/v1/accounts/{{ $json.AccountId }}/account_users",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "user_id",
+              "value": "={{ $json.UserId }}"
+            },
+            {
+              "name": "role",
+              "value": "=administrator"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3260f1ab-5ea3-4561-88d4-7f319fb7e45b",
+      "name": "Attach user at account",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        5480,
+        940
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "4",
+          "name": "Chatwoot Platform App"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "baseUrl": "={{ $node['Obtendo Informações do Webhook'].json.URLQUEPSA }}",
+        "token": "={{ $node['Obtendo Informações do Webhook'].json['TOKEN QUEPASA'] }}",
+        "text": "=Olá {{ $json.client_name }}\n\n*Seu pagamento foi confirmado*\n\n👏Parabéns👏\n\nSegue seu acesso abaixo:\n\nSite: https://app.socialatendimento.com.br\n\nEmail: {{ $json.client_email }}  \n\nSenha: !Abcd1234\n\nDuvidas e so me chamar \n\n",
+        "chatId": "={{ $json.client_cel }}"
+      },
+      "id": "16b95474-2649-4a2b-bf45-6a90e52ee63b",
+      "name": "Quepasa",
+      "type": "n8n-nodes-quepasa.quepasa",
+      "typeVersion": 1,
+      "position": [
+        5700,
+        640
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $node.Merge2.json.client_email }}",
+        "subject": "Pagamento Aprovado SocialAtendimento",
+        "message": "=Olá {{ $node.Merge2.json.client_name }}\n\nSeu pagamento foi confirmado\n\n👏Parabéns👏\n\nSegue seu acesso abaixo:\n\nSite: https://app.socialatendimento.com.br\n\nEmail: {{ $node.Merge2.json.client_email }}  \n\nSenha: !Abcd1234\n",
+        "options": {}
+      },
+      "id": "a002bc6d-15a1-422f-8124-e2f61009d3e8",
+      "name": "Gmail",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2,
+      "position": [
+        5900,
+        640
+      ],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "8",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "da238072-93c5-49ad-a4a1-0d5287a71b08",
+        "options": {}
+      },
+      "id": "53073ff4-0407-43f2-8a24-7762db362af6",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        -520,
+        680
+      ],
+      "webhookId": "da238072-93c5-49ad-a4a1-0d5287a71b08",
+      "continueOnFail": true,
+      "notes": "Sucesso"
+    },
+    {
+      "parameters": {
+        "url": "https://www.asaas.com/api/v3/customers?",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "customer",
+              "value": "={{ $node.Webhook.json.body.payment.customer }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "access_token",
+              "value": "={{ $node['Obtendo Informações do Webhook'].json['Token Asaas'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "4aef686b-124f-4b40-85f2-7a5c96d85a00",
+      "name": "Consulta Fatura",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [
+        900,
+        640
+      ],
+      "executeOnce": false,
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "value": "={{ $json['Data próximo Vencimento'] }}",
+        "dataPropertyName": "data_formatada",
+        "toFormat": "YYYY-MM-DD",
+        "options": {}
+      },
+      "id": "f584d982-4860-477a-ab8f-29e3db377da2",
+      "name": "Enviando Formato Data Vencimento",
+      "type": "n8n-nodes-base.dateTime",
+      "typeVersion": 1,
+      "position": [
+        1800,
+        640
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://www.asaas.com/api/v3/customers?",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "cpfCnpj",
+              "value": "={{ $json.data[0].cpfCnpj }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "access_token",
+              "value": "={{ $node['Obtendo Informações do Webhook'].json['Token Asaas'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2a09f0a2-f66c-45bd-a1d8-a4b2abdab229",
+      "name": "Localiza Consulta",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [
+        1120,
+        640
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.socialatendimento.com.br/platform/api/v1/accounts",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "name",
+              "value": "={{ $node['Organizando as Informações'].json.data[0].name }}"
+            },
+            {
+              "name": "locale",
+              "value": "pt_BR"
+            },
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "id": "f51a9895-bfe9-48e9-a492-5419a13d7022",
+      "name": "Cria Cliente Conta",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        3740,
+        900
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "4",
+          "name": "Chatwoot Platform App"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.socialatendimento.com.br/platform/api/v1/users",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "name",
+              "value": "={{ $node['Organizando as Informações'].json.data[0].name }}"
+            },
+            {
+              "name": "email",
+              "value": "={{ $node['Organizando as Informações'].json.data[0].email }}"
+            },
+            {
+              "name": "password",
+              "value": "=!Abcd1234"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e7d6164c-a4c1-41a0-a32a-db4e8936bfe8",
+      "name": "Cria cliente conta",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        4680,
+        860
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "4",
+          "name": "Chatwoot Platform App"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "URLQUEPSA",
+              "value": "https://quepasa.socialatendimento.com.br"
+            },
+            {
+              "name": "TOKEN QUEPASA",
+              "value": "token1683463747"
+            },
+            {
+              "name": "Token Asaas",
+              "value": "$aact_YTU5YTE0M2M2N2I4MTliNzk0YTI5N2U5MzdjNWZmNDQ6OjAwMDAwMDAwMDAwMDAyMjM2MTA6OiRhYWNoXzllN2Q2ODIyLTI2MjgtNDYzNC1iNTBlLTkwMzA0NjM4NGY4OQ=="
+            },
+            {
+              "name": "ID Plano 1",
+              "value": "865315849345"
+            },
+            {
+              "name": "ID Plano 2",
+              "value": "703449178237"
+            },
+            {
+              "name": "ID Plano 3",
+              "value": "585484681559"
+            },
+            {
+              "name": "ID Plano 4",
+              "value": "772792292970"
+            },
+            {
+              "name": "ID Plano 4",
+              "value": "5413742319039881"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "6cc4a536-48ce-4524-b700-c9c43158e43e",
+      "name": "Coloque as informações Informações",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [
+        20,
+        660
+      ]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "Dias",
+              "value": "30"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "5f7badd0-081d-435e-af17-fa6832e1f0e1",
+      "name": "Dias",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        680,
+        640
+      ]
+    },
+    {
+      "parameters": {
+        "baseUrl": "={{ $node['Obtendo Informações do Webhook'].json.URLQUEPSA }}",
+        "token": "={{ $node['Obtendo Informações do Webhook'].json['TOKEN QUEPASA'] }}",
+        "text": "=Olá Marcelo\n\n*Pagamento foi confirmado do cliente {{ $json.client_name }}*\n\n👏Parabéns👏\n\nPlano: {{ $node.Dias.json['Quantidade de  dias do Plano 1  Dias'] }}\n\nValor:  {{ $node.Webhook.json.body.payment.netValue }}",
+        "chatId": "=551530420926"
+      },
+      "id": "f2a8a675-977e-49bd-95db-163c9b0c60f4",
+      "name": "Marcelo",
+      "type": "n8n-nodes-quepasa.quepasa",
+      "typeVersion": 1,
+      "position": [
+        6100,
+        640
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "=SELECT * FROM users;",
+        "additionalFields": {}
+      },
+      "id": "05f4ca71-9050-4f56-a479-a662ea3e35e4",
+      "name": "Get Existent Account1",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1,
+      "position": [
+        2360,
+        880
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "1",
+          "name": "Postgres SocialAtendimento"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.uid }}",
+              "value2": "={{ $node['Organizando as Informações'].json.client_email }}"
+            }
+          ]
+        }
+      },
+      "id": "19eefcff-0c7f-46e9-91a9-a053dfa22233",
+      "name": "IF1",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        2600,
+        880
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": "20"
+      },
+      "id": "7fee8f18-36d1-4922-8be7-9364e0a6f9f5",
+      "name": "Nota Fiscal",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [
+        40,
+        440
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.body.event }}",
+              "value2": "PAYMENT_UPDATED"
+            }
+          ]
+        }
+      },
+      "id": "5a5c1e50-ae45-4464-bd89-f3319a1d183f",
+      "name": "Verificando Status1",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -200,
+        940
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": "25"
+      },
+      "id": "216d4a74-8186-4749-841e-036f29274c09",
+      "name": "Renovação",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [
+        60,
+        920
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "13iPzU9CrjUnri_dXLtn4W2R4dl5gTWScwzbFDL9QhFE",
+          "mode": "list",
+          "cachedResultName": "Planilha sem título",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/13iPzU9CrjUnri_dXLtn4W2R4dl5gTWScwzbFDL9QhFE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Página1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/13iPzU9CrjUnri_dXLtn4W2R4dl5gTWScwzbFDL9QhFE/edit#gid=0"
+        },
+        "columnToMatchOn": "Nome",
+        "valueToMatchOn": "={{ $json.data[0].name }}",
+        "fieldsUi": {
+          "values": [
+            {
+              "column": "Email",
+              "fieldValue": "={{ $json.data[0].email }}"
+            },
+            {
+              "column": "Próximo Vencimento",
+              "fieldValue": "={{ $json['Data próximo Vencimento'] }}"
+            },
+            {
+              "column": "Telefone",
+              "fieldValue": "={{ $json.client_cel }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "33238106-c059-48f6-a76a-90b6036d9c39",
+      "name": "Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 3,
+      "position": [
+        5500,
+        640
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "2",
+          "name": "Google Sheets SocialWhats"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.paymentLink }}",
+              "value2": "865315849345"
+            },
+            {
+              "value1": "={{ $json.paymentLink }}",
+              "value2": "703449178237"
+            },
+            {
+              "value1": "={{ $json.paymentLink }}",
+              "value2": "585484681559"
+            },
+            {
+              "value1": "={{ $json.paymentLink }}",
+              "value2": "772792292970"
+            },
+            {
+              "value1": "={{ $json.paymentLink }}",
+              "value2": "651475719029"
+            }
+          ]
+        },
+        "combineOperation": "any"
+      },
+      "id": "0050bfb3-6eaf-4cf9-8bcb-e3e04b94a8d1",
+      "name": "IF",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        440,
+        660
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Capturando Telefone": {
+      "main": [
+        [
+          {
+            "node": "Capturando Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Capturando Data": {
+      "main": [
+        [
+          {
+            "node": "Enviando Formato Data Vencimento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Organizando as Informações": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Existent Account1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Existent Account": {
+      "main": [
+        [
+          {
+            "node": "Set1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If account found ?": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Cria Cliente Conta",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "If account found ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "No Operation, do nothing": {
+      "main": [
+        [
+          {
+            "node": "Cria cliente conta",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set2": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge2": {
+      "main": [
+        [
+          {
+            "node": "Attach user at account",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Obtendo Informações do Webhook": {
+      "main": [
+        [
+          {
+            "node": "IF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Verificando Status",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Verificando Status1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Consulta Fatura": {
+      "main": [
+        [
+          {
+            "node": "Localiza Consulta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Localiza Consulta": {
+      "main": [
+        [
+          {
+            "node": "Capturando Telefone",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cria Cliente Conta": {
+      "main": [
+        [
+          {
+            "node": "Set",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cria cliente conta": {
+      "main": [
+        [
+          {
+            "node": "Set2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Coloque as informações Informações": {
+      "main": [
+        [
+          {
+            "node": "Obtendo Informações do Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verificando Status": {
+      "main": [
+        [
+          {
+            "node": "Coloque as informações Informações",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Nota Fiscal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dias": {
+      "main": [
+        [
+          {
+            "node": "Consulta Fatura",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Existent Account1": {
+      "main": [
+        [
+          {
+            "node": "IF1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Get Existent Account",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Quepasa": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail": {
+      "main": [
+        [
+          {
+            "node": "Marcelo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviando Formato Data Vencimento": {
+      "main": [
+        [
+          {
+            "node": "Organizando as Informações",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verificando Status1": {
+      "main": [
+        [
+          {
+            "node": "Renovação",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF": {
+      "main": [
+        [
+          {
+            "node": "Dias",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {},
+  "versionId": "1d57d36b-521b-475c-9a81-9e0e8c71eb9b",
+  "id": "14",
+  "meta": {
+    "instanceId": "f02f26887e67df04425977547fa1b8580520c931a164aac95b06be62082bb6f9"
+  },
+  "tags": [
+    {
+      "createdAt": "2023-05-06T20:24:55.307Z",
+      "updatedAt": "2023-05-06T20:24:55.307Z",
+      "id": "1",
+      "name": "SUFFICIT"
+    },
+    {
+      "createdAt": "2023-05-06T20:25:45.644Z",
+      "updatedAt": "2023-05-06T20:25:45.644Z",
+      "id": "2",
+      "name": "EngajamentoFlow"
+    },
+    {
+      "createdAt": "2023-05-06T20:25:45.644Z",
+      "updatedAt": "2023-05-06T20:25:45.644Z",
+      "id": "3",
+      "name": "QUEPASA"
+    },
+    {
+      "createdAt": "2023-05-06T20:26:21.016Z",
+      "updatedAt": "2023-05-06T20:26:21.016Z",
+      "id": "6",
+      "name": "CHATWOOT"
+    },
+    {
+      "createdAt": "2023-05-07T16:57:34.748Z",
+      "updatedAt": "2023-05-07T16:57:34.748Z",
+      "id": "7",
+      "name": "V1"
+    }
+  ]
+}
