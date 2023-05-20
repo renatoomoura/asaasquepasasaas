@@ -38,15 +38,13 @@
 **Conta Asaas**
 
 </p>
-Precisamos ter uma conta na Asaas se não copie link abaixo 
+Precisamos ter uma conta na Asaas se não tiver uma copie link abaixo 
 </p>
 
 ```
 https://www.asaas.com/r/fb/494c528f-9bd1-4f7a-b31d-4def8c0822d0
 ```
 
-</p>
-Segunda tarefa e criar token no Asaas
 </p>
 Acesse o painel de controle do ASAAS em https://www.asaas.com/login.
 
@@ -131,6 +129,103 @@ Nesse worflow não faremos nada
 
 ----------------------------------------------------------------------------
 </p>
+</p>
+
+**Criando credenciais do Google Sheets no n8n**
+
+</p>
+Você precisa seguir os seguintes passos:
+ </p>
+Acesse o Google Cloud Console em https://console.cloud.google.com/.
+</p>
+Clique no botão "Selecionar projeto" no canto superior direito e crie um novo projeto ou selecione um projeto existente.
+</p>
+Após selecionar ou criar um projeto, clique no botão de navegação no canto superior esquerdo e vá para a seção "API e serviços" e, em 
+</p>
+seguida, "Biblioteca".
+</p>
+Na biblioteca de APIs, pesquise por "Google Sheets API" e clique no resultado correspondente.
+</p>
+Na página da API do Google Sheets, clique no botão "Ativar" para habilitar a API para o seu projeto.
+</p>
+Após ativar a API, volte para a seção "API e serviços" e clique em "Credenciais".
+</p>
+Na página de Credenciais, clique no botão "Criar credenciais" e selecione "ID do cliente OAuth".
+</p>
+Na seção "Configurar consentimento OAuth", preencha as informações necessárias, como nome do aplicativo, e-mail de contato e escopos de 
+</p>
+acesso. Certifique-se de adicionar o escopo "https://www.googleapis.com/auth/spreadsheets" para acesso ao Google Sheets.
+</p>
+Após configurar o consentimento, você será redirecionado para a página de criação das credenciais.
+</p>
+Selecione o tipo de aplicativo adequado para o seu caso de uso. Por exemplo, se você estiver usando o n8n localmente, pode escolher 
+</p>
+"Aplicativo para área de trabalho".
+</p>
+Preencha as informações adicionais necessárias, como nome da credencial e URIs de redirecionamento.
+</p>
+Clique no botão "Criar" para criar as credenciais.
+</p>
+Na página de credenciais, você encontrará as informações da credencial criada, incluindo o ID do cliente e o segredo do cliente.
+</p>
+No n8n, adicione um nó "Google Sheets" ao seu fluxo de trabalho.
+</p>
+Configure o nó "Google Sheets" e clique em "Autenticar".
+</p>
+Na janela de autenticação exibida, selecione "Google Sheets OAuth2 API" como serviço, insira o ID do cliente e o segredo do cliente 
+</p>
+obtidos nas etapas anteriores.
+</p>
+Siga as etapas de autorização e autenticação para conceder acesso ao n8n para interagir com o Google Sheets.
+</p>
+Após autenticar com sucesso, o nó "Google Sheets" estará pronto para uso em seu fluxo de trabalho.
+</p>
+Certifique-se de proteger suas credenciais do Google Sheets e não compartilhá-las com outras pessoas, pois elas fornecem acesso aos seus 
+</p>
+dados do Google Sheets.
+</p>
+
+----------------------------------------------------------------------------
+
+</p>
+
+**Pegando suas credeciais no n8n do Postgres**
+
+</p>
+Acesse o diretório do Chatwoot em seu sistema onde o aplicativo está instalado.
+</p>
+Procure o arquivo .env no diretório chatwoot ou chatwoot/chatwoot. O caminho completo pode ser semelhante a /home/chatwoot/chatwoot/.env.
+</p>
+Abra o arquivo .env em um editor de texto.
+</p>
+Dentro do arquivo, você encontrará variáveis de ambiente definidas, incluindo aquelas relacionadas ao banco de dados PostgreSQL.
+</p>
+Procure as variáveis de ambiente relacionadas ao PostgreSQL, que normalmente incluem POSTGRES_HOST, POSTGRES_PORT, POSTGRES_DATABASE, 
+</p>
+POSTGRES_USERNAME e POSTGRES_PASSWORD.
+</p>
+Anote os valores dessas variáveis, que representam as informações de conexão necessárias.
+</p>
+Agora você pode usar essas informações para configurar o nó PostgreSQL no n8n. Ao configurar o nó PostgreSQL, preencha as seguintes 
+</p>
+informações:
+</p>
+Host: O valor da variável POSTGRES_HOST.
+</p>
+Port: O valor da variável POSTGRES_PORT.
+</p>
+Database: O valor da variável POSTGRES_DATABASE.
+</p>
+User: O valor da variável POSTGRES_USERNAME.
+</p>
+Password: O valor da variável POSTGRES_PASSWORD.
+</p>
+Certifique-se de fornecer as informações corretas e de que o servidor do banco de dados PostgreSQL esteja acessível para o nó PostgreSQL 
+</p>
+do n8n. Lembre-se também de proteger as credenciais e não compartilhá-las publicamente.
+</p>
+
+----------------------------------------------------------------------------
 
 **Worflow Asaas Chatwoot Pagamentos Quepasa Vencidos**
 
